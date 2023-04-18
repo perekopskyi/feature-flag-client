@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useFeatureFlag } from '../hooks/useFeatureFlag';
 
 // Problem: 
 //     This should be coloured based on FF value
@@ -6,6 +7,11 @@ import React from 'react';
 //     details-section-cta-colour
 // Setup: 
 //     Fill background color with flag value.
-export const RequestReviewButton = () => (
-  <button>Request doctor review</button>
-)
+export const RequestReviewButton = () => {
+  const featureFlag = useFeatureFlag('details-section-cta-colour');
+
+  const color = useMemo(() => featureFlag, [featureFlag])
+
+  return (
+  <button style={{background: color}}>Request doctor review</button>
+)}
