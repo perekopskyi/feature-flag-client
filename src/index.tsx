@@ -7,10 +7,10 @@ import {
 } from "react-router-dom";
 import ReactDOM from 'react-dom';
 
-import { LoginScreen } from './screens/login';
-import { DashboardScreen } from './screens/dashboard';
+import { LoginScreen } from './screens/login'
+import { DashboardScreen } from './screens/dashboard'
 
-import './index.css';
+import './index.css'
 
 ReactDOM.render(
   <React.StrictMode>
@@ -23,4 +23,4 @@ ReactDOM.render(
     </Router>
   </React.StrictMode>,
   document.getElementById('root')
-);
+)

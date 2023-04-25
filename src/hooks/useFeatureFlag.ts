@@ -1,37 +1,36 @@
-import { useState, useEffect } from 'react';
-import LDClient from 'launchdarkly-js-client-sdk';
+import { useState, useEffect } from 'react'
+import { useLaunchDarkly } from '../context/LaunchDarkly/useLaunchDarkly'
+import { FlagValue } from '../context/LaunchDarkly/types'
 
-export const useFeatureFlag = (flagKey: string, defaultValue?: boolean| string) => {
-  const [flagValue, setFlagValue] = useState<any>(defaultValue);
+export const useFeatureFlag = (flagKey: string, defaultValue?: FlagValue) => {
+  const [flagValue, setFlagValue] = useState<FlagValue>(defaultValue)
+  const { ldClient, flags, setFlags } = useLaunchDarkly()
 
   useEffect(() => {
-    const ldClient = LDClient.initialize(process.env.REACT_APP_LAUNCH_DARKLY_CLIENT_ID as string, {
-      "kind": "user",
-      "key": "user-key-123abc",
-      "name": "Sandy Smith",
-      "email": "sandy@example.com"
-    },
-    { /* options */ });
+    const updateFlag = (newFlagValue: FlagValue) => setFlagValue(newFlagValue)
 
-    const updateFlag = (newFlagValue: boolean) => {
-      setFlagValue(newFlagValue);
-    };
+    if (flagKey in flags) {
+      updateFlag(flags[flagKey])
+    }
 
-    ldClient.on('change', (changes: any) => {
+    ldClient.on('change', changes => {
       if (flagKey in changes) {
-        updateFlag(changes[flagKey].current);
+        // update current flag
+        updateFlag(changes[flagKey].current)
+        // Update slags in store
+        setFlags({ ...flags, [flagKey]: changes[flagKey].current })
       }
-    });
+    })
 
     ldClient.on('ready', () => {
-      const initialFlagValue = ldClient.variation(flagKey, defaultValue);
-      updateFlag(initialFlagValue);
-    });
+      const initialFlagValue = ldClient.variation(flagKey, defaultValue)
+      updateFlag(initialFlagValue)
+    })
 
     return () => {
-      ldClient.close();
-    };
-  }, [flagKey, defaultValue]);
+      ldClient.off('change', updateFlag)
+    }
+  }, [flagKey, defaultValue, ldClient, flags, setFlags])
 
-  return flagValue;
-};
+  return flagValue
+}

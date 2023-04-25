@@ -1,11 +1,12 @@
 import React from 'react';
-import { useFeatureFlag } from '../hooks/useFeatureFlag';
+import { useFeatureFlag } from '../hooks/useFeatureFlag'
+import { launchBannerFlagKey } from '../feature-flag-config'
 
-// Problem: 
+// Problem:
 //     This should be conditionally rendered based on feature flag enrolment.
-// Feature flag name: 
+// Feature flag name:
 //     general-render-launch-banner
-// Setup: 
+// Setup:
 //     Show to users with flag value: true
 const PromotionalBanner = () => (
   <div className="promotional-banner">
@@ -13,16 +14,18 @@ const PromotionalBanner = () => (
   </div>
 )
 
-export const PageLayout = ({ children, className }: { children: React.ReactNode, className: string }) => {
-  const featureFlag = useFeatureFlag('general-render-launch-banner', false);
-
-  if (!featureFlag) {
-    return null
-  }
+export const PageLayout = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className: string
+}) => {
+  const launchBannerFlag = useFeatureFlag(launchBannerFlagKey, false)
 
   return (
     <div className={`page-layout ${className}`}>
-      <PromotionalBanner />
+      {launchBannerFlag && <PromotionalBanner />}
       {children}
     </div>
   )

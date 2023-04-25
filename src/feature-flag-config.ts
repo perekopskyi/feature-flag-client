@@ -16,6 +16,11 @@ export const launchBannerFlagKey = 'general-render-launch-banner'
  * Show when: Returns 'variation'
  */
 export const profileSectionFlagKey = 'profile-render-details-section'
+export enum ProfileSectionFlag {
+  notEnrolled = 'not-enrolled',
+  control = 'control',
+  variation = 'variation',
+}
 
 /**
  * Controls: The colour of the detail section CTA
